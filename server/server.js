@@ -15,15 +15,17 @@ const app = express();
 app.use(cors()); // Enable Cross-Origin requests
 app.use(express.json()); // Parse JSON request body
 
+app.use('/api/users', userRoutes);
+app.use('/api/vocab', vocabRoutes);
+
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(() => console.log('MongoDB connected'))
-.catch(err => console.log(err));
-
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+}).then(() => {
+    console.log('MongoDB connected');
+    // Start server
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}).catch(err => console.log(err));
 

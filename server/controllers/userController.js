@@ -5,20 +5,19 @@ const jwt = require('jsonwebtoken');
 // Register User
 const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
-
+    
     try {
         let user = await User.findOne({ username });
         if (user) return res.status(400).json({ message: 'User already exists!' });
 
-        // Encrypt the password before saving
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        user = new User({ username, email, password: hashedPassword });
+        console.log(username, email, password);
+        user = new User({ username, email, password });
         await user.save();
 
         // Generate JWT token
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        req.user._id = User._id;
         res.status(201).json({ token, user: { id: user._id, username, email } });
 
     } catch (error) {
@@ -26,16 +25,20 @@ const registerUser = async (req, res) => {
     }
 };
 
+
 // Login User
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
 
     try {
+        const passwordStr = String(password).trim();
+        console.log(username);
+
         let user = await User.findOne({ username });
         if (!user) return res.status(400).json({ message: 'User does not exist!' });
 
         // Compare passwords
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(passwordStr, user.password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
         // Generate JWT token
