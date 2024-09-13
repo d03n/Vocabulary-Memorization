@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const VocabList = require('../models/VocabularyList');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -10,9 +11,14 @@ const registerUser = async (req, res) => {
         let user = await User.findOne({ username });
         if (user) return res.status(400).json({ message: 'User already exists!' });
 
-        console.log(username, email, password);
-        user = new User({ username, email, password });
+        // db management
+        const vocabList = new VocabList();
+        
+        user = new User({ username, email, password, userVocabList: vocabList._id });
         await user.save();
+        
+        vocabList.user = user._id;
+        await userVocabList.save();
 
         // Generate JWT token
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });

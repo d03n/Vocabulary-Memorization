@@ -6,7 +6,7 @@ const vocabSchema = new mongoose.Schema({
     partOfSpeech: { type: String, required: true},
     definition: { type: String, required: true },
     example: { type: String },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } // Link to user
+    vocabList: { type: mongoose.Schema.Types.ObjectId, ref: 'VocabularyList' } // Link to user
 });
 
 module.exports = mongoose.model('Vocabulary', vocabSchema);

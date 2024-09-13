@@ -1,5 +1,6 @@
 const express = require('express');
 const Vocabulary = require('../models/Vocabulary');
+const VocabularyList = require('../models/VocabularyList');
 
 const getVocabList = async (req, res) => {
     try {
@@ -32,9 +33,11 @@ const addVocab = async (req, res) => {
             partOfSpeech,
             definition,
             example,
-            user: req.user.id // Use the correct field name `user`
+            vocabList: req.user.userVocabList
         });
         await newVocab.save();
+
+        await VocabularyList.v
 
         // Return the newly created vocabulary
         res.status(201).json(newVocab);
@@ -65,4 +68,4 @@ const deleteVocab = async (req, res) => {
     }
 };
 
-module.exports = {getVocabList, addVocab};
+module.exports = {getVocabList, addVocab, deleteVocab};
