@@ -6,7 +6,7 @@ require('dotenv').config();
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const vocabRoutes = require('./routes/vocabRoutes');
-// const quizRoutes = require('./routes/quizRoutes');
+const quizRoutes = require('./routes/quizRoutes');
 
 // Initialize express app
 const app = express();
@@ -17,6 +17,7 @@ app.use(express.json()); // Parse JSON request body
 
 app.use('/api/users', userRoutes);
 app.use('/api/vocab', vocabRoutes);
+app.use('/api/quiz', quizRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {

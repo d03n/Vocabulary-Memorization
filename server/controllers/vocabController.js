@@ -53,24 +53,52 @@ const addVocab = async (req, res) => {
     }
 };
 
-const updateVocab = (req, res) => {
-    const {word, partOfSpeech, definition, example} = req.body;
+const updateVocab = async (req, res) => {
+    try {
+        const { word, partOfSpeech, definition, example } = req.body;
+
+        // Build an update object with only non-null fields
+        const updateFields = {};
+        
+        if (word != null) updateFields.word = word;
+        if (partOfSpeech != null) updateFields.partOfSpeech = partOfSpeech;
+        if (definition != null) updateFields.definition = definition;
+        if (example != null) updateFields.example = example;
 
 
-}
+        // Update vocabulary document
+        const updatedVocabulary = await Vocabulary.findOneAndUpdate(
+            { _id: req.params.id, vocabList: req.user.userVocabList },  // Find vocabulary by ID
+            { $set: updateFields },   // Only update non-null fields
+            { new: true }             // Return the updated document
+        );
+
+        if (!updatedVocabulary) {
+            return res.status(404).json({ message: "Vocabulary not found" });
+        }
+
+        res.status(200).json(updatedVocabulary);
+
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: "Server error" });
+    }
+};
 
 // Delete a vocabulary word
 const deleteVocab = async (req, res) => {
     try {
         const vocab = await Vocabulary.findById(req.params.id);
-        if (!vocab || vocab.user.toString() !== req.user.id) {
+        console.log(vocab.vocabList.toString());
+        if (!vocab || vocab.vocabList.toString() != req.user.userVocabList) {
             return res.status(404).json({ message: 'Vocabulary not found' });
         }
-        await vocab.remove();
+        await Vocabulary.deleteOne({ _id: req.params.id, vocabList: req.user.userVocabList });
         res.status(200).json({ message: 'Vocabulary deleted' });
-    } catch (error) {
+    } catch (err) {
+        console.log(err)
         res.status(500).json({ message: 'Server error' });
     }
 };
 
-module.exports = {getVocabList, addVocab, deleteVocab};
+module.exports = {getVocabList, addVocab, updateVocab, deleteVocab};

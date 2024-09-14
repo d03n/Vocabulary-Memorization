@@ -6,4 +6,4 @@ const router = express.Router();
 
 router.get('/', authMiddleware, getQuiz);
 
-module.export = router;
+module.exports = router;
