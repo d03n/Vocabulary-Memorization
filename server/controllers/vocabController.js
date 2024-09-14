@@ -29,22 +29,26 @@ const addVocab = async (req, res) => {
 
         // Create and save the new vocabulary
         const newVocab = new Vocabulary({
-            word,
-            partOfSpeech,
-            definition,
-            example,
+            word: String(word).trim().toLowerCase(),
+            partOfSpeech: String(partOfSpeech).trim().toLowerCase(),
+            definition: String(definition).trim().toLowerCase(),
+            example: String(example).trim(),
             vocabList: req.user.userVocabList
         });
+        
+        // query
+        const vocabList = await VocabularyList.findById(req.user.userVocabList);
+        vocabList.vocabList.push(newVocab._id);
+        
+        await vocabList.save();
         await newVocab.save();
-
-        await VocabularyList.v
 
         // Return the newly created vocabulary
         res.status(201).json(newVocab);
 
     } catch (error) {
         console.error('Server error:', error); // Log error details for debugging
-        res.status(500).json({ message: 'Server error' });
+        returnres.status(500).json({ message: 'Server error' });
     }
 };
 

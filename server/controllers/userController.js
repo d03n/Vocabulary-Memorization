@@ -12,21 +12,24 @@ const registerUser = async (req, res) => {
         if (user) return res.status(400).json({ message: 'User already exists!' });
 
         // db management
-        const vocabList = new VocabList();
         
-        user = new User({ username, email, password, userVocabList: vocabList._id });
-        await user.save();
-        
+        user = new User({ username, email, password });
+
+        const vocabList = new VocabList({user: user._id});
         vocabList.user = user._id;
-        await userVocabList.save();
+
+        user.userVocabList = vocabList._id;
+        
+        await user.save();
+        await vocabList.save();
 
         // Generate JWT token
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        req.user._id = User._id;
         res.status(201).json({ token, user: { id: user._id, username, email } });
 
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Server error' });
     }
 };

@@ -6,7 +6,7 @@ require('dotenv').config();
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const vocabRoutes = require('./routes/vocabRoutes');
-const quizRoutes = require('./routes/quizRoutes');
+// const quizRoutes = require('./routes/quizRoutes');
 
 // Initialize express app
 const app = express();
