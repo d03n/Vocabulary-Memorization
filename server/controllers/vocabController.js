@@ -4,9 +4,10 @@ const VocabularyList = require('../models/VocabularyList');
 
 const getVocabList = async (req, res) => {
     try {
-        const vocabList = await Vocabulary.find({user: req.user._id})
+        const vocabList = await Vocabulary.find({vocabList: req.user.userVocabList});
         res.status(200).json(vocabList);
-    } catch {
+    } catch(err) {
+        console.log(err);
         res.status(500).json({message: 'Server error'});
     }
 };
