@@ -1,12 +1,10 @@
-import { useParams } from "react-router-dom";
+import { axios } from 'axios';
+import { useState } from 'react';
 
-function Quiz(props) {
-    const {id} = useParams();
+function Quiz() {
     return (
         <>
-            <h1>Quiz {id} </h1>
+            
         </>
     );
 }
-
-export { Quiz };
